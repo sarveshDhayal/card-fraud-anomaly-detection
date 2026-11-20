@@ -1,0 +1,86 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\begin{document}
+
+\title{Phase 1 Machine Learning Evaluation Report: Credit Card Fraud Triage via Gaussian Mixture Density Scoring and AML Baselines}
+
+\author{\IEEEauthorblockN{Sarvesh Choudhary}
+\IEEEauthorblockA{\textit{Department of Computer Science \& Artificial Intelligence} \\
+\textit{Advanced Machine Learning Laboratory} \\
+Individual Project --- Phase 1 Evaluation: Machine Learning Component}
+}
+
+\maketitle
+
+\begin{abstract}
+This report fulfills the Phase 1 Machine Learning Evaluation requirements for the CSAI course project. Financial fraud detection in card authorization streams operates under extreme class imbalance ($\sim$0.17\% fraud prevalence), high label latency (30--90 days), and concept drift. Supervised models trained on historical fraud labels suffer from survivor bias and blindness to novel fraud typologies. In this phase, we formulate fraud triage as an unsupervised anomaly detection problem, training models strictly on legitimate cardholder transactions. We implement: (1) a rigorous anti-leakage chronological split (60\% Train, 20\% Validation, 20\% Test); (2) an Anti-Money Laundering (AML) statistical baseline using Gaussian Mixture Models (GMM) with AIC/BIC model selection; (3) an Isolation Forest unsupervised baseline; and (4) a supervised Logistic Regression upper bound. Evaluated on an untouched chronologically future test set of 56,962 transactions (75 frauds) from the benchmark ULB dataset, the GMM achieves a Precision-Recall AUC of 0.2196 (over 166$\times$ above the 0.132\% random guessing baseline) and captures 65.33\% of frauds at a 0.5\% False Positive Rate (FPR) budget, validating the feasibility of unsupervised statistical density triage.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Fraud Detection, Anomaly Detection, Gaussian Mixture Models, AIC/BIC Tuning, Class Imbalance, Precision-Recall AUC.
+\end{IEEEkeywords}
+
+\section{Introduction \& Problem Statement}
+Payment card fraud produces tens of billions of dollars in global annual losses. In production authorization engines, supervised classifiers face three core vulnerabilities:
+\begin{enumerate}
+    \item \textbf{Extreme Class Imbalance:} Fraud constitutes only $\sim$0.17\% of all transactions.
+    \item \textbf{Label Latency:} Verified fraud dispute chargebacks take 30--90 days to settle.
+    \item \textbf{Concept Drift \& Adversarial Adaptation:} Fraudsters alter attack patterns to evade static supervised boundaries.
+\end{enumerate}
+We frame payment fraud as an \textit{unsupervised anomaly triage problem}. By training models strictly on legitimate transactions ($Class = 0$), the model learns nominal cardholder behavior, and novel frauds emerge naturally as low-density outliers.
+
+\section{Literature Review: AML Density Estimation}
+Statistical AML transaction monitoring relies on probability density estimation. A Gaussian Mixture Model (GMM) represents the probability density $p(x)$ as a linear superposition of $K$ multivariate Gaussian components:
+\begin{equation}
+p(x) = \sum_{k=1}^K \pi_k \mathcal{N}(x \mid \mu_k, \Sigma_k)
+\end{equation}
+The anomaly score corresponds to the negative log-likelihood:
+\begin{equation}
+Score(x) = -\log p(x)
+\end{equation}
+In 29 dimensions, sample covariance matrices can become ill-conditioned. We regularize the diagonal via $\Sigma_k \leftarrow \Sigma_k + \epsilon I$ ($\epsilon = 10^{-4}$) to guarantee positive definiteness. Hyperparameter selection is governed by the Bayesian Information Criterion (BIC):
+\begin{equation}
+\text{BIC} = -2 \ln \hat{L} + p \ln(N)
+\end{equation}
+
+\section{Dataset, EDA \& Anti-Leakage Protocol}
+We analyze the benchmark ULB / Kaggle dataset (284,807 transactions across 48 hours).
+\begin{itemize}
+    \item \textbf{Total Transactions:} 284,807; Legitimate: 284,315 (99.83\%); Fraud: 492 (0.17\%).
+    \item \textbf{Features:} $V_1$ to $V_{28}$ (PCA anonymized) and $\text{Amount}_{\log 1p} = \ln(1 + \text{Amount})$.
+    \item \textbf{Chronological Partitioning:} Ordered by timestamp without shuffling: Train (60\%, 0.0h--33.4h, 170,524 legit rows), Validation (20\%, 33.4h--40.3h), Test (20\%, 40.3h--48.0h, 75 frauds).
+    \item \textbf{StandardScaler:} Fit strictly on legitimate training samples; applied via transform-only to validation and test.
+\end{itemize}
+
+\section{Phase 1 Model Evaluation \& Results}
+Table~\ref{tab:phase1_results} summarizes Phase 1 evaluation on the untouched test partition.
+
+\begin{table}[h]
+\centering
+\caption{Phase 1 Machine Learning Evaluation Results}
+\label{tab:phase1_results}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{PR-AUC [95\% CI]} & \textbf{ROC-AUC} & \textbf{Rec @ 0.5\% FPR} & \textbf{Prec @ 100} \\
+\midrule
+\textbf{GMM (AML Baseline)} & \textbf{0.2196 [0.148, 0.317]} & 0.9458 & \textbf{65.33\%} & \textbf{26.00\%} \\
+Isolation Forest & 0.0950 [0.072, 0.128] & 0.9525 & 54.67\% & 9.00\% \\
+\midrule
+\textit{Logistic Reg. (Supervised)} & \textit{0.7473 [0.633, 0.853]} & \textit{0.9818} & \textit{85.33\%} & \textit{60.00\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Key Findings & Phase 1 Conclusion}
+The GMM baseline achieves a PR-AUC of 0.2196 ($>$166$\times$ above random guessing) and catches 65.33\% of test frauds under a tight 0.5\% FPR operational budget, drastically outperforming Isolation Forest. This confirms the efficacy of statistical density triage for Phase 1.
+
+\end{document}
