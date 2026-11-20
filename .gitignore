@@ -2,6 +2,8 @@
 data/
 *.csv
 !results/comparison_table.csv
+!outputs/results/comparison_table.csv
+!app/sample_transactions.csv
 
 # Python
 __pycache__/
