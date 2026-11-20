@@ -3,9 +3,12 @@
 **Author:** Sarvesh Choudhary  
 **Project Type:** Individual Research & Engineering Project (CSAI Advanced ML & DL)  
 
+[![Live Demo](https://img.shields.io/badge/Streamlit_App-Live_Demo-FF4B4B?style=for-the-badge&logo=streamlit)](https://sarveshdhayal-card-fraud-anomaly-detection-app-369ce8.streamlit.app/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
+
+🔗 **Live Deployed Application:** [https://sarveshdhayal-card-fraud-anomaly-detection-app-369ce8.streamlit.app/](https://sarveshdhayal-card-fraud-anomaly-detection-app-369ce8.streamlit.app/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3+-F7931E.svg)](https://scikit-learn.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-FF4B4B.svg)](https://streamlit.io/)
 
