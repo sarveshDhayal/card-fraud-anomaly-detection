@@ -19,7 +19,7 @@ test:
 	python3 -m unittest discover tests
 
 app:
-	streamlit run app.py
+	streamlit run app/app.py
 
 reports:
 	python3 scripts/generate_pdf_reports.py

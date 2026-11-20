@@ -121,14 +121,18 @@ def score_samples_gmm(gmm: GaussianMixture, X: np.ndarray) -> np.ndarray:
     return -log_prob
 
 
-def save_gmm(gmm: GaussianMixture, filepath: str = "models/gmm_model.joblib") -> None:
+def save_gmm(gmm: GaussianMixture, filepath: str = "outputs/models/gmm_model.joblib") -> None:
     """Serialize GMM model to disk."""
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     joblib.dump(gmm, filepath)
 
 
-def load_gmm(filepath: str = "models/gmm_model.joblib") -> GaussianMixture:
+def load_gmm(filepath: str = "outputs/models/gmm_model.joblib") -> GaussianMixture:
     """Load serialized GMM model from disk."""
     if not os.path.exists(filepath):
-        raise FileNotFoundError(f"GMM model not found at {filepath}")
+        alt = filepath.replace("outputs/models/", "models/") if "outputs/" in filepath else os.path.join("outputs", filepath)
+        if os.path.exists(alt):
+            filepath = alt
+        else:
+            raise FileNotFoundError(f"GMM model not found at {filepath} or {alt}")
     return joblib.load(filepath)

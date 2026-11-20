@@ -30,12 +30,16 @@ def set_seed(seed: int = 42) -> None:
         torch.backends.cudnn.benchmark = False
 
 
-def load_raw_data(filepath: str = "data/creditcard.csv") -> pd.DataFrame:
+def load_raw_data(filepath: str = "data/raw/creditcard.csv") -> pd.DataFrame:
     """Load credit card dataset from CSV and validate structure."""
     if not os.path.exists(filepath):
-        raise FileNotFoundError(
-            f"Dataset not found at {filepath}. Please ensure creditcard.csv is placed in the data/ directory."
-        )
+        alt_path = "data/creditcard.csv"
+        if os.path.exists(alt_path):
+            filepath = alt_path
+        else:
+            raise FileNotFoundError(
+                f"Dataset not found at {filepath} or {alt_path}."
+            )
     df = pd.read_csv(filepath)
     expected_cols = ["Time"] + [f"V{i}" for i in range(1, 29)] + ["Amount", "Class"]
     for col in expected_cols:
@@ -78,7 +82,7 @@ def get_dataset_summary(df: pd.DataFrame) -> Dict[str, Any]:
 
 
 def prepare_data(
-    filepath: str = "data/creditcard.csv",
+    filepath: str = "data/raw/creditcard.csv",
     train_frac: float = 0.60,
     val_frac: float = 0.20,
     test_frac: float = 0.20,

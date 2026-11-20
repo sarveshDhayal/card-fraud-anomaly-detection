@@ -212,7 +212,7 @@ def score_samples_ae(
     return np.concatenate(scores_list, axis=0)
 
 
-def save_autoencoder(model: Autoencoder, filepath: str = "models/autoencoder.pt") -> None:
+def save_autoencoder(model: Autoencoder, filepath: str = "outputs/models/autoencoder.pt") -> None:
     """Save PyTorch autoencoder state dict."""
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     torch.save(
@@ -225,10 +225,14 @@ def save_autoencoder(model: Autoencoder, filepath: str = "models/autoencoder.pt"
     )
 
 
-def load_autoencoder(filepath: str = "models/autoencoder.pt", device: str = "cpu") -> Autoencoder:
+def load_autoencoder(filepath: str = "outputs/models/autoencoder.pt", device: str = "cpu") -> Autoencoder:
     """Load PyTorch autoencoder from saved state dict."""
     if not os.path.exists(filepath):
-        raise FileNotFoundError(f"Model file not found at {filepath}")
+        alt = filepath.replace("outputs/models/", "models/") if "outputs/" in filepath else os.path.join("outputs", filepath)
+        if os.path.exists(alt):
+            filepath = alt
+        else:
+            raise FileNotFoundError(f"Model file not found at {filepath} or {alt}")
     checkpoint = torch.load(filepath, map_location=device)
     model = Autoencoder(
         input_dim=checkpoint.get("input_dim", 29),

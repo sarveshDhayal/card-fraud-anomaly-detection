@@ -122,35 +122,35 @@ Evaluation on the chronologically held-out test set ($N = 56,962$ transactions, 
 ### Precision-Recall Curves (Primary Evaluation Metric)
 Precision-Recall curves reflect true operational utility under extreme class imbalance. Both unsupervised models achieve PR-AUC > 0.218 (~166x above the 0.132% random guessing baseline).
 
-![Precision-Recall Curves](results/pr_curves_comparison.png)
+![Precision-Recall Curves](outputs/figures/pr_curves_comparison.png)
 
 ### Receiver Operating Characteristic (ROC) Curves
-![ROC Curves](results/roc_curves_comparison.png)
+![ROC Curves](outputs/figures/roc_curves_comparison.png)
 
 ### Anomaly Score Separation Distributions
 Clear density separation between legitimate transactions (blue) and true frauds (orange).
 
-![Score Distributions](results/score_distributions.png)
+![Score Distributions](outputs/figures/score_distributions.png)
 
 ### Recall at Fixed False Positive Rate (FPR) Budgets
 At an operational budget of 0.5% FPR, the Autoencoder captures **77.33% of all test frauds** vs 65.33% for GMM and 54.67% for Isolation Forest.
 
-![Recall at FPR Budgets](results/recall_at_fpr_comparison.png)
+![Recall at FPR Budgets](outputs/figures/recall_at_fpr_comparison.png)
 
 ### Review Capacity Performance (Precision@K)
 Precision among the top $K$ transactions routed to the fraud analyst queue:
 
-![Precision at Review Capacity](results/precision_at_k_comparison.png)
+![Precision at Review Capacity](outputs/figures/precision_at_k_comparison.png)
 
 ### Operational Threshold Trade-Off & Review Burden
 Shows the cost curve: False positives generated per fraud caught as recall increases.
 
-![Threshold Trade-off](results/threshold_tradeoff.png)
+![Threshold Trade-off](outputs/figures/threshold_tradeoff.png)
 
 ### Error Analysis & Feature Inspection
 Comparison of top false positives (benign high-dollar / unusual purchases) vs missed frauds (low-amount stealth transactions):
 
-![Error Analysis](results/error_analysis.png)
+![Error Analysis](outputs/figures/error_analysis.png)
 
 ---
 
@@ -194,10 +194,13 @@ card-fraud-anomaly-detection/
 │       ├── test_features.csv
 │       └── val_features.csv
 ├── docs/
-│   ├── Phase1_IEEE_Report.tex   # Phase 1 ML evaluation IEEE paper
-│   ├── Phase2_IEEE_Report.tex   # Phase 2 DL & Hybrid evaluation IEEE paper
+│   ├── Phase1_IEEE_Report.pdf   # Compiled Phase 1 IEEE PDF report
+│   ├── Phase1_IEEE_Report.tex   # Phase 1 ML evaluation IEEE LaTeX source
+│   ├── Phase2_IEEE_Report.pdf   # Compiled Phase 2 IEEE PDF report
+│   ├── Phase2_IEEE_Report.tex   # Phase 2 DL & Hybrid IEEE LaTeX source
 │   ├── generate_phase2_report.py# Automated report metric verification
-│   └── Phase2_Presentation.md   # Complete 15-slide presentation script
+│   ├── Phase2_Presentation.md   # 15-slide presentation script & speaker notes
+│   └── VIVA_VOCE_GUIDE.md       # Comprehensive Individual Viva Voce Q&A Guide
 ├── notebooks/
 │   ├── 01_EDA_Data_Exploration.ipynb
 │   ├── 02_Data_Preparation_and_Feature_Engineering.ipynb
@@ -210,8 +213,7 @@ card-fraud-anomaly-detection/
 │   ├── 09_Model_PyTorch_Denoising_Autoencoder.ipynb
 │   ├── 10_Final_Phase1_vs_Phase2_Comparison.ipynb
 │   ├── 11_Hybrid_Model_and_Ablation_Studies.ipynb
-│   ├── utils.py                 # Shared notebook utility helpers
-│   └── fraud_triage.ipynb       # All-in-one complete executable notebook
+│   └── utils.py                 # Shared notebook utility helpers
 ├── outputs/
 │   ├── figures/                 # All 12 high-resolution generated plots
 │   ├── models/                  # Saved weights (GMM joblib, Autoencoder pt)
@@ -248,19 +250,19 @@ pip install -r requirements.txt
 ```bash
 python3 src/pipeline.py
 ```
-This fits all models, tunes GMM, trains autoencoders with early stopping, generates all plots in `results/`, saves weights in `models/`, and writes `results/comparison_table.csv`.
+This fits all models, tunes GMM, trains autoencoders with early stopping, generates all plots in `outputs/figures/`, saves weights in `outputs/models/`, and writes `outputs/results/comparison_table.csv`.
 
-### 3. Run Notebook In-Process
+### 3. Run Notebooks Interactively
 ```bash
-python3 scripts/execute_notebook_inprocess.py
+jupyter notebook notebooks/
 ```
-Or open and execute interactively:
+Or execute all modular notebooks in-process:
 ```bash
-jupyter notebook notebooks/fraud_triage.ipynb
+python3 scripts/execute_all_notebooks.py
 ```
 
 ### 4. Launch Streamlit Interactive Demo
 ```bash
-streamlit run app.py
+streamlit run app/app.py
 ```
 Upload custom transactions or sample test batches, select scoring models, and adjust triage thresholds dynamically.

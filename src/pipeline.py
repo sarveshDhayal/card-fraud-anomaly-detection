@@ -50,7 +50,7 @@ from src.metrics import (
 )
 
 
-def run_eda_visualizations(data_dict: Dict[str, Any], output_dir: str = "results") -> None:
+def run_eda_visualizations(data_dict: Dict[str, Any], output_dir: str = "outputs/figures") -> None:
     """Generate and save EDA plots."""
     os.makedirs(output_dir, exist_ok=True)
     df = data_dict["df_raw"]
@@ -163,14 +163,16 @@ def run_pipeline() -> Dict[str, Any]:
     """Execute complete end-to-end experiment and save all artifacts."""
     seed = 42
     set_seed(seed)
-    results_dir = "results"
-    models_dir = "models"
+    figures_dir = "outputs/figures"
+    results_dir = "outputs/results"
+    models_dir = "outputs/models"
+    os.makedirs(figures_dir, exist_ok=True)
     os.makedirs(results_dir, exist_ok=True)
     os.makedirs(models_dir, exist_ok=True)
 
     print(">>> 1. Loading data & creating chronological splits...")
-    data_dict = prepare_data("data/creditcard.csv", seed=seed)
-    run_eda_visualizations(data_dict, output_dir=results_dir)
+    data_dict = prepare_data("data/raw/creditcard.csv", seed=seed)
+    run_eda_visualizations(data_dict, output_dir=figures_dir)
     print("EDA plots saved.")
 
     X_train_legit = data_dict["X_train_legit"]
@@ -213,7 +215,7 @@ def run_pipeline() -> Dict[str, Any]:
     ax2.legend()
 
     plt.tight_layout()
-    fig.savefig(os.path.join(results_dir, "gmm_aic_bic_curve.png"), dpi=300)
+    fig.savefig(os.path.join(figures_dir, "gmm_aic_bic_curve.png"), dpi=300)
     plt.close(fig)
 
     best_k = int(gmm_selection["best_bic"]["n_components"])
@@ -284,7 +286,7 @@ def run_pipeline() -> Dict[str, Any]:
     ax2.legend()
 
     plt.tight_layout()
-    fig.savefig(os.path.join(results_dir, "autoencoder_loss_curves.png"), dpi=300)
+    fig.savefig(os.path.join(figures_dir, "autoencoder_loss_curves.png"), dpi=300)
     plt.close(fig)
 
     # -------------------------------------------------------------
@@ -401,7 +403,7 @@ def run_pipeline() -> Dict[str, Any]:
     ax.set_ylim([0.0, 1.02])
     ax.legend(loc="upper right")
     plt.tight_layout()
-    fig.savefig(os.path.join(results_dir, "pr_curves_comparison.png"), dpi=300)
+    fig.savefig(os.path.join(figures_dir, "pr_curves_comparison.png"), dpi=300)
     plt.close(fig)
 
     # ROC Curves
@@ -423,7 +425,7 @@ def run_pipeline() -> Dict[str, Any]:
     ax.set_ylabel("True Positive Rate (Recall)", fontsize=12)
     ax.legend(loc="lower right")
     plt.tight_layout()
-    fig.savefig(os.path.join(results_dir, "roc_curves_comparison.png"), dpi=300)
+    fig.savefig(os.path.join(figures_dir, "roc_curves_comparison.png"), dpi=300)
     plt.close(fig)
 
     # Anomaly Score Distributions (GMM vs AE vs DAE)
@@ -446,7 +448,7 @@ def run_pipeline() -> Dict[str, Any]:
         ax.legend()
 
     plt.tight_layout()
-    fig.savefig(os.path.join(results_dir, "score_distributions.png"), dpi=300)
+    fig.savefig(os.path.join(figures_dir, "score_distributions.png"), dpi=300)
     plt.close(fig)
 
     # Recall at FPR budgets Bar Chart
@@ -479,7 +481,7 @@ def run_pipeline() -> Dict[str, Any]:
     ax.set_xticklabels(fpr_budgets, fontsize=11, fontweight="bold")
     ax.legend(loc="upper left")
     plt.tight_layout()
-    fig.savefig(os.path.join(results_dir, "recall_at_fpr_comparison.png"), dpi=300)
+    fig.savefig(os.path.join(figures_dir, "recall_at_fpr_comparison.png"), dpi=300)
     plt.close(fig)
 
     # Precision at K Bar Chart
@@ -511,7 +513,7 @@ def run_pipeline() -> Dict[str, Any]:
     ax.set_xticklabels(ks, fontsize=11, fontweight="bold")
     ax.legend(loc="upper right")
     plt.tight_layout()
-    fig.savefig(os.path.join(results_dir, "precision_at_k_comparison.png"), dpi=300)
+    fig.savefig(os.path.join(figures_dir, "precision_at_k_comparison.png"), dpi=300)
     plt.close(fig)
 
     # -------------------------------------------------------------
@@ -580,7 +582,7 @@ def run_pipeline() -> Dict[str, Any]:
     ax2.set_ylabel("Transaction Count")
 
     plt.tight_layout()
-    fig.savefig(os.path.join(results_dir, "threshold_tradeoff.png"), dpi=300)
+    fig.savefig(os.path.join(figures_dir, "threshold_tradeoff.png"), dpi=300)
     plt.close(fig)
 
     # -------------------------------------------------------------
@@ -623,7 +625,7 @@ def run_pipeline() -> Dict[str, Any]:
             ax.legend(fontsize=9)
 
     plt.tight_layout()
-    fig.savefig(os.path.join(results_dir, "error_analysis.png"), dpi=300)
+    fig.savefig(os.path.join(figures_dir, "error_analysis.png"), dpi=300)
     plt.close(fig)
 
     print(">>> All experiments complete! Comparison table:")
