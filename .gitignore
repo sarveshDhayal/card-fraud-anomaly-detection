@@ -1,0 +1,41 @@
+# Data
+data/
+*.csv
+!results/comparison_table.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# PyTorch models (large binaries can be tracked if small or ignored)
+# models/*.pt
+
+# OS
+.DS_Store
+Thumbs.db
